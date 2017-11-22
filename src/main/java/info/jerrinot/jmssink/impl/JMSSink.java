@@ -6,14 +6,14 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 import javax.jms.*;
 import java.io.Serializable;
 
-public final class SimpleJMSSink extends SinkSupport<Object> {
+public final class JMSSink extends SinkSupport<Object> {
     private final String connectionUrl;
     private final String queueName;
 
     private transient QueueSession session;
     private transient QueueSender sender;
 
-    public SimpleJMSSink(String connectionUrl, String queueName) {
+    public JMSSink(String connectionUrl, String queueName) {
         this.connectionUrl = connectionUrl;
         this.queueName = queueName;
     }
@@ -52,7 +52,7 @@ public final class SimpleJMSSink extends SinkSupport<Object> {
 
     @Override
     public String toString() {
-        return "SimpleJMSSink{" +
+        return "JMSSink{" +
                 "connectionUrl='" + connectionUrl + '\'' +
                 ", queueName='" + queueName + '\'' +
                 '}';

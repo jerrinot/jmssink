@@ -5,7 +5,7 @@ import com.hazelcast.jet.config.JetConfig;
 import com.hazelcast.jet.stream.IStreamMap;
 import com.hazelcast.test.AssertTask;
 import com.hazelcast.test.HazelcastTestSupport;
-import info.jerrinot.jmssink.impl.SimpleJMSSink;
+import info.jerrinot.jmssink.impl.JMSSink;
 import org.apache.activemq.junit.EmbeddedActiveMQBroker;
 import org.junit.Rule;
 import org.junit.Test;
@@ -32,7 +32,7 @@ public class SmokeTest extends HazelcastTestSupport {
         Pipeline pipeline = Pipeline.create();
         pipeline.drawFrom(mapJournal(sourceMapName, false))
                 .map(e -> new AbstractMap.SimpleImmutableEntry(e.getKey(), e.getNewValue()))
-                .drainTo(asSink(new SimpleJMSSink(broker.getVmURL(), queueName)));
+                .drainTo(asSink(new JMSSink(broker.getVmURL(), queueName)));
 
         JetConfig config = new JetConfig();
         config.getHazelcastConfig()
