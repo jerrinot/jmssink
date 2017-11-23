@@ -12,7 +12,7 @@ public class JMSSourceP extends AbstractProcessor {
     private transient QueueSession session;
     private transient QueueReceiver receiver;
 
-    private Object lastItem;
+    private Object pendingItem;
 
     public JMSSourceP(String connectionUrl, String queueName) {
         this.connectionUrl = connectionUrl;
@@ -38,20 +38,24 @@ public class JMSSourceP extends AbstractProcessor {
 
     @Override
     public boolean complete() {
-        if (lastItem != null) {
-            boolean accepted = tryEmit(lastItem);
-            if (!accepted) {
-                return false;
-            }
+        if (!tryToSendPendingItem()) {
+            return false;
         }
         do {
-            lastItem = tryReceive();
-            if (lastItem == null) {
+            pendingItem = tryReceive();
+            if (pendingItem == null) {
                 return false;
             }
-        } while (tryEmit(lastItem));
+        } while (tryEmit(pendingItem));
 
         return false;
+    }
+
+    private boolean tryToSendPendingItem() {
+        if (pendingItem == null) {
+            return true;
+        }
+        return tryEmit(pendingItem);
     }
 
     private Object tryReceive() {
