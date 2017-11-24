@@ -33,7 +33,7 @@ public class SmokeTest extends HazelcastTestSupport {
 
         Pipeline pipeline = Pipeline.create();
         pipeline.drawFrom(mapJournal(sourceMapName, false))
-                .map(e -> new AbstractMap.SimpleImmutableEntry(e.getKey(), e.getNewValue()))
+                .map(e -> new AbstractMap.SimpleImmutableEntry<>(e.getKey(), e.getNewValue()))
                 .drainTo(asSink(new JMSSink(broker.getVmURL(), queueName)));
 
         JetConfig config = new JetConfig();
@@ -60,7 +60,7 @@ public class SmokeTest extends HazelcastTestSupport {
 
         Pipeline pushingToJMSPipeline = Pipeline.create();
         pushingToJMSPipeline.drawFrom(mapJournal(sourceMapName, false))
-                .map(e -> new AbstractMap.SimpleImmutableEntry(e.getKey(), e.getNewValue()))
+                .map(e -> new AbstractMap.SimpleImmutableEntry<>(e.getKey(), e.getNewValue()))
                 .drainTo(asSink(new JMSSink(connectionUrl, queueName)));
 
         JetConfig config = new JetConfig();

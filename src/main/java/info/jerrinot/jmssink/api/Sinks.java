@@ -11,19 +11,14 @@ import static com.hazelcast.jet.impl.util.Util.uncheckRun;
 
 final class Sinks {
 
-    static <E> ProcessorMetaSupplier writeSupport(SimpleSink<E> sinkSupport) {
+    static <E> ProcessorMetaSupplier writeSupport(SinkSupport<E> sinkSupport) {
         DistributedIntFunction<Object> createSenderFb;
         DistributedConsumer<Object> disposeBufferFn;
-        if (sinkSupport instanceof LifecycleAware) {
             createSenderFb = ignored -> {
-                    uncheckRun(() -> ((LifecycleAware)sinkSupport).start());
+                    uncheckRun(sinkSupport::start);
                     return null;
             };
-            disposeBufferFn = ignored -> uncheckRun(() -> ((LifecycleAware)sinkSupport).stop());
-        } else {
-            createSenderFb = ignored -> null;
-            disposeBufferFn = ignored -> {};
-        }
+            disposeBufferFn = ignored -> uncheckRun(sinkSupport::stop);
         DistributedBiConsumer<Object, E> addToBufferFn = (ignored, e) -> sinkSupport.invoke(e);
         return dontParallelize(
                 writeBufferedP(
