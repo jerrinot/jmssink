@@ -57,10 +57,10 @@ public abstract class SourceSupport<T> implements Serializable {
         }
     }
 
-    public static <T> Source<T> asSource(SourceSupport<T> sourceSupport) {
+    public Source<T> asSource() {
         ProcessorMetaSupplier processorMetaSupplier = dontParallelize(
-                cloneAndSupply(new MySource(sourceSupport)));
+                cloneAndSupply(new MySource(this)));
 
-        return Sources.fromProcessor(sourceSupport.toString(), processorMetaSupplier);
+        return Sources.fromProcessor(this.toString(), processorMetaSupplier);
     }
 }

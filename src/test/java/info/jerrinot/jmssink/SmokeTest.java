@@ -17,7 +17,6 @@ import java.util.Map;
 
 import static com.hazelcast.jet.Sources.mapJournal;
 import static info.jerrinot.jmssink.api.SinkSupport.asSink;
-import static info.jerrinot.jmssink.api.SourceSupport.asSource;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.junit.Assert.assertEquals;
 
@@ -76,7 +75,7 @@ public class SmokeTest extends HazelcastTestSupport {
 
 
         Pipeline pullingFromJMSPipeline = Pipeline.create();
-        pullingFromJMSPipeline.drawFrom(asSource(new JMSSource<Map.Entry>(connectionUrl, queueName)))
+        pullingFromJMSPipeline.drawFrom(new JMSSource<Map.Entry>(connectionUrl, queueName).asSource())
                 .drainTo(Sinks.map(targetMapName));
         jetInstance.newJob(pullingFromJMSPipeline);
 
