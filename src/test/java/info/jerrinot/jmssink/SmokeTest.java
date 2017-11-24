@@ -6,7 +6,7 @@ import com.hazelcast.jet.stream.IStreamMap;
 import com.hazelcast.test.AssertTask;
 import com.hazelcast.test.HazelcastTestSupport;
 import info.jerrinot.jmssink.impl.JMSSink;
-import info.jerrinot.jmssink.impl.JMSSourceP;
+import info.jerrinot.jmssink.impl.JMSSource;
 import org.apache.activemq.junit.EmbeddedActiveMQBroker;
 import org.junit.Rule;
 import org.junit.Test;
@@ -16,8 +16,8 @@ import java.util.AbstractMap;
 import java.util.Map;
 
 import static com.hazelcast.jet.Sources.mapJournal;
-import static com.hazelcast.jet.core.ProcessorMetaSupplier.dontParallelize;
 import static info.jerrinot.jmssink.api.SinkSupport.asSink;
+import static info.jerrinot.jmssink.api.SourceSupport.asSource;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.junit.Assert.assertEquals;
 
@@ -76,8 +76,7 @@ public class SmokeTest extends HazelcastTestSupport {
 
 
         Pipeline pullingFromJMSPipeline = Pipeline.create();
-        pullingFromJMSPipeline.drawFrom(Sources.<Map.Entry>fromProcessor("readFromJMS",
-                dontParallelize(() -> new JMSSourceP(connectionUrl, queueName))))
+        pullingFromJMSPipeline.drawFrom(asSource(new JMSSource<Map.Entry>(connectionUrl, queueName)))
                 .drainTo(Sinks.map(targetMapName));
         jetInstance.newJob(pullingFromJMSPipeline);
 
