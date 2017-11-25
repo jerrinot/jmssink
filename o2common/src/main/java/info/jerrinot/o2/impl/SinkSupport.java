@@ -1,18 +1,16 @@
-package info.jerrinot.o2.api;
+package info.jerrinot.o2.impl;
 
 import com.hazelcast.jet.JetException;
 import com.hazelcast.jet.Sink;
+import com.hazelcast.jet.Sinks;
 import com.hazelcast.jet.core.ProcessorMetaSupplier;
+import com.hazelcast.jet.core.processor.SinkProcessors;
 import com.hazelcast.jet.function.DistributedBiConsumer;
 import com.hazelcast.jet.function.DistributedConsumer;
 import com.hazelcast.jet.function.DistributedIntFunction;
+import com.hazelcast.jet.impl.util.Util;
 
 import java.io.Serializable;
-
-import static com.hazelcast.jet.Sinks.fromProcessor;
-import static com.hazelcast.jet.core.ProcessorMetaSupplier.dontParallelize;
-import static com.hazelcast.jet.core.processor.SinkProcessors.writeBufferedP;
-import static com.hazelcast.jet.impl.util.Util.uncheckRun;
 
 /**
  * Convenient class for creating custom sinks.
@@ -41,20 +39,20 @@ public abstract class SinkSupport<E> implements Serializable {
     }
 
     public final Sink<E> asSink() {
-        return fromProcessor(this.toString(), writeSupport(this));
+        return Sinks.fromProcessor(this.toString(), writeSupport(this));
     }
 
     private ProcessorMetaSupplier writeSupport(SinkSupport<E> sinkSupport) {
         DistributedIntFunction<Object> createSenderFb;
         DistributedConsumer<Object> disposeBufferFn;
         createSenderFb = ignored -> {
-            uncheckRun(sinkSupport::start);
+            Util.uncheckRun(sinkSupport::start);
             return null;
         };
-        disposeBufferFn = ignored -> uncheckRun(sinkSupport::stop);
+        disposeBufferFn = ignored -> Util.uncheckRun(sinkSupport::stop);
         DistributedBiConsumer<Object, E> addToBufferFn = (ignored, e) -> sinkSupport.invoke(e);
-        return dontParallelize(
-                writeBufferedP(
+        return ProcessorMetaSupplier.dontParallelize(
+                SinkProcessors.writeBufferedP(
                         createSenderFb,
                         addToBufferFn,
                         i -> {

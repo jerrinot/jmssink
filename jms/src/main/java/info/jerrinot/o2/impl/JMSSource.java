@@ -1,7 +1,6 @@
 package info.jerrinot.o2.impl;
 
 import com.hazelcast.jet.core.Processor;
-import info.jerrinot.o2.api.SourceSupport;
 import org.apache.activemq.ActiveMQConnectionFactory;
 
 import javax.jms.*;

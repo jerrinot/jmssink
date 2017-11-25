@@ -1,4 +1,4 @@
-package info.jerrinot.o2.api;
+package info.jerrinot.o2.impl;
 
 import com.hazelcast.jet.Source;
 import com.hazelcast.jet.Sources;
