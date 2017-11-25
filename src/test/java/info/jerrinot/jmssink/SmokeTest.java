@@ -16,7 +16,6 @@ import java.util.AbstractMap;
 import java.util.Map;
 
 import static com.hazelcast.jet.Sources.mapJournal;
-import static info.jerrinot.jmssink.api.SinkSupport.asSink;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.junit.Assert.assertEquals;
 
@@ -33,7 +32,7 @@ public class SmokeTest extends HazelcastTestSupport {
         Pipeline pipeline = Pipeline.create();
         pipeline.drawFrom(mapJournal(sourceMapName, false))
                 .map(e -> new AbstractMap.SimpleImmutableEntry<>(e.getKey(), e.getNewValue()))
-                .drainTo(asSink(new JMSSink(broker.getVmURL(), queueName)));
+                .drainTo(new JMSSink(broker.getVmURL(), queueName).asSink());
 
         JetConfig config = new JetConfig();
         config.getHazelcastConfig()
@@ -60,7 +59,7 @@ public class SmokeTest extends HazelcastTestSupport {
         Pipeline pushingToJMSPipeline = Pipeline.create();
         pushingToJMSPipeline.drawFrom(mapJournal(sourceMapName, false))
                 .map(e -> new AbstractMap.SimpleImmutableEntry<>(e.getKey(), e.getNewValue()))
-                .drainTo(asSink(new JMSSink(connectionUrl, queueName)));
+                .drainTo(new JMSSink(connectionUrl, queueName).asSink());
 
         JetConfig config = new JetConfig();
         config.getHazelcastConfig()
