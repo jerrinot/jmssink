@@ -1,12 +1,12 @@
-package info.jerrinot.jmssink;
+package info.jerrinot.o2;
 
 import com.hazelcast.jet.*;
 import com.hazelcast.jet.config.JetConfig;
 import com.hazelcast.jet.stream.IStreamMap;
 import com.hazelcast.test.AssertTask;
 import com.hazelcast.test.HazelcastTestSupport;
-import info.jerrinot.jmssink.impl.JMSSink;
-import info.jerrinot.jmssink.impl.JMSSource;
+import info.jerrinot.o2.impl.JMSSink;
+import info.jerrinot.o2.impl.JMSSource;
 import org.apache.activemq.junit.EmbeddedActiveMQBroker;
 import org.junit.Rule;
 import org.junit.Test;

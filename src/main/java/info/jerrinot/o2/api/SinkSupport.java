@@ -1,4 +1,4 @@
-package info.jerrinot.jmssink.api;
+package info.jerrinot.o2.api;
 
 import com.hazelcast.jet.JetException;
 import com.hazelcast.jet.Sink;

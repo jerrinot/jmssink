@@ -1,4 +1,4 @@
-package info.jerrinot.jmssink.api;
+package info.jerrinot.o2.api;
 
 import com.hazelcast.jet.Source;
 import com.hazelcast.jet.Sources;
@@ -10,7 +10,7 @@ import com.hazelcast.jet.impl.util.ExceptionUtil;
 import java.io.Serializable;
 
 import static com.hazelcast.jet.core.ProcessorMetaSupplier.dontParallelize;
-import static info.jerrinot.jmssink.impl.CloningSupplier.cloneAndSupply;
+import static info.jerrinot.o2.impl.CloningSupplier.cloneAndSupply;
 
 public abstract class SourceSupport<T> implements Serializable {
 

@@ -1,6 +1,6 @@
-package info.jerrinot.jmssink.impl;
+package info.jerrinot.o2.impl;
 
-import info.jerrinot.jmssink.api.SinkSupport;
+import info.jerrinot.o2.api.SinkSupport;
 import org.apache.activemq.ActiveMQConnectionFactory;
 
 import javax.jms.*;

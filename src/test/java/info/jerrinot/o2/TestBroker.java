@@ -1,4 +1,4 @@
-package info.jerrinot.jmssink;
+package info.jerrinot.o2;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.junit.EmbeddedActiveMQBroker;

@@ -1,4 +1,4 @@
-package info.jerrinot.jmssink.impl;
+package info.jerrinot.o2.impl;
 
 import com.hazelcast.jet.function.DistributedSupplier;
 import com.hazelcast.jet.impl.util.ExceptionUtil;
