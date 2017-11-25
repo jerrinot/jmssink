@@ -57,7 +57,7 @@ public abstract class SourceSupport<T> implements Serializable {
         }
     }
 
-    public Source<T> asSource() {
+    public final Source<T> asSource() {
         ProcessorMetaSupplier processorMetaSupplier = dontParallelize(
                 cloneAndSupply(new MySource(this)));
 

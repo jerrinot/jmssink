@@ -29,9 +29,7 @@ public class CloningSupplier<T> implements DistributedSupplier<T> {
         try {
             ObjectInputStream ois = new ObjectInputStream(bais);
             return (T) ois.readObject();
-        } catch (IOException e) {
-            throw ExceptionUtil.sneakyThrow(e);
-        } catch (ClassNotFoundException e) {
+        } catch (ClassNotFoundException | IOException e) {
             throw ExceptionUtil.sneakyThrow(e);
         }
     }
