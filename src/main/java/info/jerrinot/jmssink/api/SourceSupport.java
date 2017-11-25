@@ -35,6 +35,11 @@ public abstract class SourceSupport<T> implements Serializable {
         }
 
         @Override
+        public boolean isCooperative() {
+            return false;
+        }
+
+        @Override
         public boolean complete() {
             if (pendingItem != null) {
                 if (!tryEmit(pendingItem)) {

@@ -40,7 +40,7 @@ public abstract class SinkSupport<E> implements Serializable {
         }
     }
 
-    public Sink<E> asSink() {
+    public final Sink<E> asSink() {
         return fromProcessor(this.toString(), writeSupport(this));
     }
 
