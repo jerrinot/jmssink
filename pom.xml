@@ -11,6 +11,7 @@
     <modules>
         <module>jms</module>
         <module>o2common</module>
+        <module>o2camel</module>
     </modules>
 
     <properties>
