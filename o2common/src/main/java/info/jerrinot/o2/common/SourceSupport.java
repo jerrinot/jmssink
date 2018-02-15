@@ -1,11 +1,15 @@
-package info.jerrinot.o2.impl;
+package info.jerrinot.o2.common;
 
-import com.hazelcast.jet.Source;
-import com.hazelcast.jet.Sources;
 import com.hazelcast.jet.core.AbstractProcessor;
 import com.hazelcast.jet.core.Processor;
 import com.hazelcast.jet.core.ProcessorMetaSupplier;
+import com.hazelcast.jet.core.WatermarkGenerationParams;
+import com.hazelcast.jet.function.DistributedObjLongBiFunction;
+import com.hazelcast.jet.function.DistributedToLongFunction;
+import com.hazelcast.jet.impl.pipeline.transform.StreamSourceTransform;
 import com.hazelcast.jet.impl.util.ExceptionUtil;
+import com.hazelcast.jet.pipeline.Sources;
+import com.hazelcast.jet.pipeline.StreamSource;
 
 import java.io.Serializable;
 
@@ -25,7 +29,7 @@ public abstract class SourceSupport<T> implements Serializable {
         private final SourceSupport sourceSupport;
         private Object pendingItem;
 
-        private MySource(SourceSupport sourceSupport) {
+        public MySource(SourceSupport<?> sourceSupport) {
             this.sourceSupport = sourceSupport;
         }
 
@@ -62,10 +66,11 @@ public abstract class SourceSupport<T> implements Serializable {
         }
     }
 
-    public final Source<T> asSource() {
-        ProcessorMetaSupplier processorMetaSupplier = dontParallelize(
-                cloneAndSupply(new MySource(this)));
-
-        return Sources.fromProcessor(this.toString(), processorMetaSupplier);
+    public final StreamSource<T> asSource() {
+        StreamSourceTransform<T> src = new StreamSourceTransform<>(this.toString(), w -> dontParallelize(
+                cloneAndSupply(new MySource(this))));
+//        return Sources.streamFromProcessor(this.toString(), w -> dontParallelize(
+//                cloneAndSupply(new MySource(this, w)))
+        return src;
     }
 }

@@ -2,6 +2,10 @@ package info.jerrinot.o2;
 
 import com.hazelcast.jet.*;
 import com.hazelcast.jet.config.JetConfig;
+import com.hazelcast.jet.core.WatermarkEmissionPolicy;
+import com.hazelcast.jet.core.WatermarkGenerationParams;
+import com.hazelcast.jet.pipeline.Pipeline;
+import com.hazelcast.jet.pipeline.Sinks;
 import com.hazelcast.jet.stream.IStreamMap;
 import com.hazelcast.test.AssertTask;
 import com.hazelcast.test.HazelcastTestSupport;
@@ -15,7 +19,9 @@ import javax.jms.*;
 import java.util.AbstractMap;
 import java.util.Map;
 
-import static com.hazelcast.jet.Sources.mapJournal;
+import static com.hazelcast.jet.core.WatermarkGenerationParams.wmGenParams;
+import static com.hazelcast.jet.core.WatermarkPolicies.limitingLag;
+import static com.hazelcast.jet.pipeline.Sources.mapJournal;
 import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.junit.Assert.assertEquals;
 
@@ -30,8 +36,7 @@ public class SmokeTest extends HazelcastTestSupport {
         String queueName = "myQueue";
 
         Pipeline pipeline = Pipeline.create();
-        pipeline.drawFrom(mapJournal(sourceMapName, false))
-                .map(e -> new AbstractMap.SimpleImmutableEntry<>(e.getKey(), e.getNewValue()))
+        pipeline.drawFrom(mapJournal(sourceMapName, JournalInitialPosition.START_FROM_OLDEST))
                 .drainTo(new JMSSink(broker.getVmURL(), queueName).asSink());
 
         JetConfig config = new JetConfig();
@@ -57,8 +62,7 @@ public class SmokeTest extends HazelcastTestSupport {
         String connectionUrl = broker.getVmURL();
 
         Pipeline pushingToJMSPipeline = Pipeline.create();
-        pushingToJMSPipeline.drawFrom(mapJournal(sourceMapName, false))
-                .map(e -> new AbstractMap.SimpleImmutableEntry<>(e.getKey(), e.getNewValue()))
+        pushingToJMSPipeline.drawFrom(mapJournal(sourceMapName, JournalInitialPosition.START_FROM_OLDEST))
                 .drainTo(new JMSSink(connectionUrl, queueName).asSink());
 
         JetConfig config = new JetConfig();

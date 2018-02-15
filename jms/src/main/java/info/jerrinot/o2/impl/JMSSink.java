@@ -1,11 +1,13 @@
 package info.jerrinot.o2.impl;
 
+import com.hazelcast.jet.impl.pipeline.JetEvent;
+import info.jerrinot.o2.common.SinkSupport;
 import org.apache.activemq.ActiveMQConnectionFactory;
 
 import javax.jms.*;
 import java.io.Serializable;
 
-public final class JMSSink extends SinkSupport<Object> {
+public final class JMSSink implements SinkSupport<Object> {
     private final String connectionUrl;
     private final String queueName;
 

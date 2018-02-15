@@ -1,14 +1,15 @@
-package info.jerrinot.o2.impl;
+package info.jerrinot.o2.common;
 
 import com.hazelcast.jet.JetException;
-import com.hazelcast.jet.Sink;
-import com.hazelcast.jet.Sinks;
 import com.hazelcast.jet.core.ProcessorMetaSupplier;
 import com.hazelcast.jet.core.processor.SinkProcessors;
 import com.hazelcast.jet.function.DistributedBiConsumer;
 import com.hazelcast.jet.function.DistributedConsumer;
 import com.hazelcast.jet.function.DistributedIntFunction;
+import com.hazelcast.jet.impl.pipeline.JetEvent;
 import com.hazelcast.jet.impl.util.Util;
+import com.hazelcast.jet.pipeline.Sink;
+import com.hazelcast.jet.pipeline.Sinks;
 
 import java.io.Serializable;
 
@@ -17,19 +18,25 @@ import java.io.Serializable;
  *
  * @param <E>
  */
-public abstract class SinkSupport<E> implements Serializable {
-    public abstract void doInvoke(E o) throws Exception;
+@FunctionalInterface
+public interface SinkSupport<E> extends Serializable {
+    void doInvoke(E o) throws Exception;
 
-    public void start() throws Exception {
+    default void start() throws Exception {
         //intentionally no-op
     }
 
-    public void stop() throws Exception {
+    default void stop() throws Exception {
         //intentionally no-op
     }
 
-    public final void invoke(E o) {
+    default void invoke(E o) {
         try {
+            if (o instanceof JetEvent) {
+                o = (E) ((JetEvent) o).payload();
+            } else {
+                System.out.println("Not Jet Event");
+            }
             doInvoke(o);
         } catch (RuntimeException e) {
             throw e;
@@ -38,11 +45,11 @@ public abstract class SinkSupport<E> implements Serializable {
         }
     }
 
-    public final Sink<E> asSink() {
+    default Sink<E> asSink() {
         return Sinks.fromProcessor(this.toString(), writeSupport(this));
     }
 
-    private ProcessorMetaSupplier writeSupport(SinkSupport<E> sinkSupport) {
+    default ProcessorMetaSupplier writeSupport(SinkSupport<E> sinkSupport) {
         DistributedIntFunction<Object> createSenderFb;
         DistributedConsumer<Object> disposeBufferFn;
         createSenderFb = ignored -> {
